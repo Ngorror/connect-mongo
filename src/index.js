@@ -218,7 +218,11 @@ module.exports = function (connect) {
       let s
 
       try {
-        s = {_id: this.computeStorageId(sid), session: this.transformFunctions.serialize(session)}
+        s = {_id: this.computeStorageId(sid), session: this.transformFunctions.serialize(session)};
+        s._expire = new Date(Date.now() + (this.ttl * 1000)).getTime();
+        s._maxAge = s.session.cookie.originalMaxAge;
+        s.ttl = new Date(Date.now() + (this.ttl * 1000));
+        s.passport = session.passport;
       } catch (err) {
         return callback(err)
       }
